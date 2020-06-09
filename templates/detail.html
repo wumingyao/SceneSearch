@@ -1,0 +1,52 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml">
+{% load static %}
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>scenery-search 搜索引擎</title>
+<link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>
+<link href="{% static 'css/detail.css' %}" rel="stylesheet" type="text/css"/>
+<script src="../static/js/soutu.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+
+</head>
+<body>
+<div id="container">
+        <div id="hd" class="ue-clear">
+            <a href="/">
+                <div class="logo"></div>
+            </a>
+            <div class="inputArea">
+                <span>
+                        <input type="text" class="searchInput" value="{{ key_words }}"/>
+                        <span class="soutu-btn" id="soutu-btn" onclick="openBrowse()"></span>
+                        <input type="file" id="soutu" style="display: none" accept="image/*"
+                               onchange="uploadImg(this.files)">
+                    </span>
+                <input type="button" class="searchButton" onclick="add_search()"/>
+            </div>
+        </div>
+<div class="detail">
+    <div  class="text">
+        <p class="name">{{hit.name}}</p>
+        <br>
+        <p>来源网站：{{hit.site}}</p >
+        <p>地址：{{hit.address}}</p >
+        <p>票价：{{hit.ticket}}</p >
+        <p>评分：{{hit.score}}</p >
+
+        <p>开放时间：{{hit.open_time}}</p >
+    </div>
+    <img class="pic" src="{{hit.url_pic}}"/>
+</div>
+<div class="intro">
+    {% if hit.brief%}
+<p class="sceneintro">景点介绍：</p >
+        <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{hit.brief}}</p >
+    {% endif %}
+</div>
+<div id="foot">Copyright &copy; yourscenery.com 版权所有</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml">
+{% load static %}
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>scenery-search 搜索引擎</title>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/index.css' %}" rel="stylesheet" type="text/css"/>
+    <script src="../static/js/jquery.min.js"></script>
+    <script src="../static/js/soutu.js"></script>
+</head>
+<body>
+<!--<canvas id="canvas" ></canvas>-->
+<div id="container">
+    <div id="bd">
+        <div id="main">
+            <h1 class="title">
+                <div class="logo large"></div>
+            </h1>
+            <!--<div class="nav ue-clear">-->
+            <!--<ul class="searchList">-->
+            <!--<li class="searchItem current" data-type="article"></li>-->
+            <!--&lt;!&ndash;<li class="searchItem" data-type="question">城市</li>&ndash;&gt;-->
+            <!--&lt;!&ndash;<li class="searchItem" data-type="job">职位</li>&ndash;&gt;-->
+            <!--</ul>-->
+            <!--</div>-->
+            <div class="historyArea">
+
+                <p class="history mysearch">
+                    <label>我的搜索：</label>
+                    <span class="all-search">
+                        <a href="javascript:;">故宫</a>
+                        <a href="javascript:;">重庆哪里好玩</a>
+                        <a href="javascript:;">迪士尼</a>
+                        <a href="javascript:;">北海</a>
+                    </span>
+                </p>
+                <!--<p class="history">-->
+                <!--<label>热门搜索：</label>-->
+                <!--{% for search_words in result_search %}-->
+                    <!--<a href="/search?q={{ search_words }}">{{ search_words }}</a>-->
+                    <!--{% endfor %}-->
+                <!--</p>-->
+            </div>
+            <!-- 上为按钮，下为弹框 -->
+            <div class="inputArea">
+                <span>
+                    <input type="text" class="searchInput"/>
+                    <span class="soutu-btn" id="soutu-btn" onclick="openBrowse()"></span>
+                    <input type="file" id="soutu" style="display: none" accept="image/*" onchange="uploadImg(this.files)">
+                </span>
+                <input type="button" class="searchButton" onclick="add_search()"/>
+
+                <ul class="dataList">
+                    <li>如何学好设计</li>
+                    <li>界面设计</li>
+                    <li>UI设计培训要多少钱</li>
+                    <li>设计师学习</li>
+                    <li>哪里有好的</li>
+                </ul>
+            </div>
+            <div class="runningPicture">
+                <div class="items">
+                    {% for search_words in result_search %}
+                        <div class="item">
+                            <a href="/search?q={{ search_words.name }}">
+                                <img class="iimg" src="{{search_words.url_pic}}"/>
+                            </a>
+                            <span>{{search_words.name}}</span>
+                        </div>
+                    {% endfor %}
+                    <!--
+                    <div class="item"><img src="../static/img/p1.jpg"/><span>故宫</span></div>
+                    <div class="item"><img src="../static/img/p2.jpg"/><span>水立方</span></div>
+                    <div class="item"><img src="../static/img/p3.jpg"/><span>长城</span></div>
+                    <div class="item"><img src="../static/img/p4.jpg"/><span>海南沙滩</span></div>
+                    <div class="item"><img src="../static/img/p5.jpg"/><span>九寨沟</span></div>
+                    <div class="item"><img src="../static/img/p6.jpg"/><span>雷峰塔</span></div>-->
+                </div>
+            </div>
+        </div><!-- End of main -->
+    </div><!--End of bd-->
+
+    <div class="foot">
+        <div class="wrap">
+            <div class="copyright">Copyright &copy; yourscenery.com 版权所有</div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/global.js' %}"></script>
+<script type="text/javascript">
+    var suggest_url = "{% url 'suggest' %}"
+    var search_url = "{% url 'search' %}"
+
+
+    $('.searchList').on('click', '.searchItem', function () {
+        $('.searchList .searchItem').removeClass('current');
+        $(this).addClass('current');
+    });
+
+    function removeByValue(arr, val) {
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] == val) {
+                arr.splice(i, 1);
+                break;
+            }
+        }
+    }
+
+
+    // 搜索建议
+    $(function () {
+        $('.searchInput').bind(' input propertychange ', function () {//当类为searchInput的元素触发input propertychange事件时，执行以下操作
+            var searchText = $(this).val();//获取搜索框中的内容
+            var tmpHtml = ""//初始化变量
+            //以下是向接口（url）请求数据
+            $.ajax({
+                cache: false,//禁用缓存（为true时，会缓存请求结果，当再次向同样的url请求时，会直接使用之前请求的返回值）
+                type: 'get',//请求方法，get、post
+                dataType: 'json',//数据的格式
+                url: suggest_url + "?s=" + searchText + "&s_type=" + $(".searchItem.current").attr('data-type'),//向url发送请求
+
+                async: true,//启用异步（true：当前ajax请求是异步的）
+                success: function (data) {//请求的返回值存在data中
+                    for (var i = 0; i < data.length; i++) {//对每条搜索建议做处理，调整为期望的html格式
+                        tmpHtml += '<li><a href="' + search_url + '?q=' + data[i] + '">' + data[i] + '</a></li>'
+                    }
+                    $(".dataList").html("")//清空搜索建议（类名为dataList的元素中的内容置空，删除所有的子孙结点）
+                    $(".dataList").append(tmpHtml);//添加搜索建议（将
+                    if (data.length == 0) {//当返回的数据条数为0时（没有相应的搜索建议），隐藏搜索建议框（类名为dataList的元素），否则显示搜索建议框
+                        $('.dataList').hide()//元素隐藏
+                    } else {
+                        $('.dataList').show()//元素显示
+                    }
+                }
+            });
+        });
+    })
+
+    hideElement($('.dataList'), $('.searchInput'));
+
+</script>
+<script>
+    var searchArr;
+    //定义一个search的，判断浏览器有无数据存储（搜索历史）
+    if (localStorage.search) {
+        //如果有，转换成 数组的形式存放到searchArr的数组里（localStorage以字符串的形式存储，所以要把它转换成数组的形式）
+        searchArr = localStorage.search.split(",")
+    } else {
+        //如果没有，则定义searchArr为一个空的数组
+        searchArr = [];
+    }
+    //把存储的数据显示出来作为搜索历史
+    MapSearchArr();
+
+    function add_search() {
+        var val = $(".searchInput").val();
+        if (val.length >= 2) {
+            //点击搜索按钮时，去重
+            KillRepeat(val);
+            //去重后把数组存储到浏览器localStorage
+            localStorage.search = searchArr;
+            //然后再把搜索内容显示出来
+            MapSearchArr();
+        }
+
+        window.location.href = search_url + '?q=' + val + "&s_type=" + $(".searchItem.current").attr('data-type')
+
+    }
+
+    function MapSearchArr() {
+        var tmpHtml = "";
+        var arrLen = 0
+        if (searchArr.length >= 5) {
+            arrLen = 5
+        } else {
+            arrLen = searchArr.length
+        }
+        for (var i = 0; i < arrLen; i++) {
+            tmpHtml += '<a href="' + search_url + '?q=' + searchArr[i] + '">' + searchArr[i] + '</a>'
+        }
+        $(".mysearch .all-search").html(tmpHtml);
+    }
+
+    //去重
+    function KillRepeat(val) {
+        var kill = 0;
+        for (var i = 0; i < searchArr.length; i++) {
+            if (val === searchArr[i]) {
+                kill++;
+            }
+        }
+        if (kill < 1) {
+            searchArr.unshift(val);
+        } else {
+            removeByValue(searchArr, val)
+            searchArr.unshift(val)
+        }
+    }
+</script>
+<script>
+
+</script>
+<script>
+    $(function () {
+        var itemNum = $(".runningPicture .items .item").length;//要旋转的div的数量
+        var itemDeg = 360 / itemNum;//计算平均偏移角度，后面的itemDeg*index是不同索引div的偏移角度
+        $(".items>.item").each(function (index, element) {
+            $(element).css({
+                //给每一个item设置好位置
+                //rotateY让每一个item绕着Y轴偏移，itemDeg*index是不同索引div的偏移角度
+                //translateZ是控制item在角度偏移后，往他们的正上方移动的距离，数值越大旋转的范围越大
+                transform: "rotateY(" + itemDeg * index + "deg) translateZ(180px)"
+            });
+        });
+    });
+</script>
+<script>
+var canvas = document.querySelector('#canvas');
+var ctx = canvas.getContext("2d");
+var starlist = [];
+function init(){
+ canvas.width = window.innerWidth - 20;
+ canvas.height = window.innerHeight - 20;
+}
+init();
+window.onresize = init;
+canvas.addEventListener('mousemove',function(e){
+ starlist.push(new Star(e.offsetX,e.offsetY));
+ console.log(starlist)
+})
+
+
+function random(min,max){
+ return Math.floor((max-min)*Math.random()+ min);
+}
+
+
+function Star(x,y){
+ this.x = x;
+ this.y = y;
+ this.vx = (Math.random()-0.5)*2.5;
+ this.vy = (Math.random()-0.5)*2.5;
+ this.color = 'rgb('+random(50,600)+','+random(50,600)+','+random(50,600)+')';
+ this.a = 1;
+ console.log(this.color);
+ this.draw();
+}
+Star.prototype={
+ draw:function(){
+  ctx.beginPath();
+  ctx.fillStyle = this.color;
+  ctx.globalCompositeOperation='lighter'
+  ctx.globalAlpha= this.a;
+  ctx.arc(this.x,this.y,20,0,Math.PI*2,false);
+  ctx.fill();
+  this.updata();
+ },
+ updata(){
+  this.x+=this.vx;
+  this.y+=this.vy;
+  this.a*=.98;
+ }
+}
+console.log(new Star(50,20));
+function render(){
+ ctx.clearRect(0,0,canvas.width,canvas.height)
+
+ starlist.forEach((item,i)=>{
+  item.draw();
+  if(item.a<0.05){
+   starlist.splice(i,1);
+  }
+ })
+
+ requestAnimationFrame(render);
+}
+render();
+
+</script>
+</html>

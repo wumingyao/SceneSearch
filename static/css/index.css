@@ -1,0 +1,238 @@
+@charset "utf-8";
+html {
+    *overflow: auto;
+}
+
+body {
+    background-image: url(../img/bg.png);
+    background-repeat: repeat;
+}
+
+#canvas{
+  /*width:100%;
+  height:100vh;*/
+  position:absolute;
+ }
+#main {
+    width: 730px;
+    margin: 20px auto 0;
+}
+
+#main h1.title {
+    margin-left: 60px;
+    width: 600px;
+}
+
+#bd {
+    margin-bottom: 20px;
+}
+
+.logo.large {
+    margin: 0px auto 10px auto;
+    width: 342px;
+    height: 144px;
+    background: url(../img/logo.png) no-repeat center center;
+}
+
+/*nav样式*/
+.nav {
+    margin-bottom: 10px;
+}
+
+.searchList {
+    float: left;
+    padding-left: 5px;
+}
+
+.searchList .searchItem {
+    float: left;
+    margin-right: 15px;
+    font-size: 14px;
+    padding: 0 0 2px 2px;
+    cursor: pointer;
+    height: 18px;
+}
+
+.searchList .searchItem.current {
+    color: #0080cc;
+    border-bottom: 2px solid #9cc813;
+    font-weight: bold;
+}
+
+/*input搜索区域*/
+.inputArea {
+    position: relative;
+    margin-bottom: 80px;
+}
+
+.inputArea .searchInput {
+    border: 1px solid #bfbfbf;
+    padding: 0 15px;
+    outline: none;
+    height: 40px;
+    margin-left: 50px;
+    *line-height: 40px;
+    width: 520px;
+    background: url(../img/inputbg.png);
+    font-size: 14px;
+    float: left;
+}
+
+/*搜图按钮样式*/
+.inputArea .soutu-btn {
+    background: #fff url(../img/soutu.png) no-repeat;
+    width: 24px;
+    height: 20px;
+    left: -30px;
+    top: 10px;
+    float: left;
+    position: relative;
+}
+
+.inputArea .searchButton {
+    position: absolute;
+    left: 600px;
+    *left: 552px;
+    *top: 1px;
+    width: 106px;
+    height: 42px;
+    *height: 41px;
+    background: url(../img/seachbtn.png) no-repeat;
+    border: none;
+    cursor: pointer;
+}
+
+/*高级搜索*/
+.inputArea .advanced {
+    position: absolute;
+    font-size: 14px;
+    left: 674px;
+    top: 12px;
+    text-decoration: underline;
+}
+
+/*联想下拉区域*/
+.inputArea .dataList {
+    display: none;
+    position: absolute;
+    left: 50px;
+    top: 42px;
+    z-index: 9999;
+    opacity: .9;
+    width: 550px;
+    padding: 5px 0;
+    background: #fff;
+    border: 1px solid #bfbfbf;
+    border-top: none;
+}
+
+.inputArea .dataList li {
+    padding: 2px 15px;
+    font-size: 14px;
+}
+
+.inputArea .dataList li:hover {
+    background: #f0f0f0;
+    color: #0080cc;
+    font-weight: bold;
+}
+
+/*搜索历史区域*/
+.historyArea {
+    margin-left: 70px;
+    /*auto;*/
+    width: 485px;
+}
+
+.historyArea .history {
+    margin-bottom: 5px;
+}
+
+.historyArea .history label {
+    font-weight: bold;
+}
+
+.historyArea .history a {
+    margin-right: 12px;
+}
+
+/*跑马灯区域*/
+.runningPicture {
+    margin: 0;
+    padding: 0;
+    /*指定观察者与平面的距离，使有透视效果*/
+    /*若无法正常3d效果，将perspective属性提到更上一个父容器即可(此处已上提，从items-->container)*/
+    perspective: 360px;
+    /*让container的伪类有过渡效果--51-54行*/
+    transition: all 1s;
+}
+
+.runningPicture .items img {
+    float: left;
+    height: 150px;
+    width: 208px;
+}
+
+.runningPicture .items span {
+    font-size: 8px;
+    font-weight: bold;
+}
+
+.runningPicture .items {
+    height: 150px;
+    width: 208px;
+    /*  border: 1px solid #032f54;*/
+    margin: 40px auto;
+    /*指定子元素定位在三维空间内*/
+    transform-style: preserve-3d;
+    /*让所有item的父级元素（即items）旋转，item就是围绕着旋转了*/
+    animation: autoMove 20s infinite linear;
+}
+
+.runningPicture .item {
+    margin-top: 35px;
+    height: 150px;
+    width: 208px;
+    background-color: white;
+    opacity: .7;
+    text-align: center;
+    position: absolute;
+}
+
+/*定义自动旋转的动画*/
+@keyframes autoMove {
+    from {
+    }
+    to {
+        transform: rotateY(-360deg);
+    }
+}
+
+.runningPicture .items:hover {
+    /*鼠标移入 暂停动画*/
+    animation-play-state: paused;
+}
+
+.runningPicture:hover {
+    /*鼠标移入，绕Z轴旋转90deg*/
+    /*transform: rotateZ(90deg);*/
+}
+
+/*版权信息*/
+.foot {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    z-index: -1;
+}
+
+.foot .wrap {
+    margin: 0 auto;
+}
+
+.foot .copyright {
+    position: relative;
+    top: -15px;
+    color: #ababab;
+    text-align: center;
+}

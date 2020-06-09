@@ -1,0 +1,118 @@
+PUT scene{
+  "settings": {
+    "index": {
+      "number_of_shards": "3",
+      "analysis": {
+        "filter": {
+          "my_pinyin": {
+            "lowercase": "true",
+            "keep_original": "true",
+            "remove_duplicated_term": "true",
+            "keep_separate_first_letter": "true",
+            "type": "pinyin",
+            "limit_first_letter_length": "16",
+            "keep_full_pinyin": "true"
+          }
+        },
+        "analyzer": {
+          "ik_max_word_pinyin": {
+            "filter": [
+              "my_pinyin",
+              "word_delimiter"
+            ],
+            "type": "custom",
+            "tokenizer": "ik_max_word"
+          },
+          "ik_smart_pinyin": {
+            "filter": [
+              "my_pinyin",
+              "word_delimiter"
+            ],
+            "type": "custom",
+            "tokenizer": "ik_smart"
+          }
+        }
+      },
+      "number_of_replicas": "1"
+    }
+  },
+  "mappings": {
+    "properties": {
+      "brief": {
+        "analyzer": "ik_max_word",
+        "type": "text"
+      },
+      "score": {
+        "analyzer": "ik_max_word",
+        "type": "text"
+      },
+      "site": {
+        "analyzer": "ik_max_word",
+        "type": "text"
+      },
+      "address": {
+        "analyzer": "ik_max_word",
+        "type": "text"
+      },
+      "ticket": {
+        "analyzer": "ik_max_word",
+        "type": "text"
+      },
+      "query": {
+        "properties": {
+          "fuzzy": {
+            "properties": {
+              "text": {
+                "properties": {
+                  "fuzziness": {
+                    "type": "long"
+                  },
+                  "prefix_length": {
+                    "type": "long"
+                  },
+                  "value": {
+                    "type": "text",
+                    "fields": {
+                      "keyword": {
+                        "ignore_above": 256,
+                        "type": "keyword"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "name": {
+        "analyzer": "ik_max_word_pinyin",
+        "type": "text"
+      },
+      "open_time": {
+        "analyzer": "ik_max_word",
+        "type": "text"
+      },
+      "url_pic": {
+        "analyzer": "ik_max_word",
+        "type": "text"
+      },
+      "suggest": {
+        "properties": {
+          "input": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "ignore_above": 256,
+                "type": "keyword"
+              }
+            }
+          },
+          "weight": {
+            "type": "long"
+          }
+        }
+      }
+    }
+  }
+}
